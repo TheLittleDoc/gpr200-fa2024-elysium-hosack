@@ -40,23 +40,39 @@ int main() {
 	//Initialization goes here!
 
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 1, 0, 0, 1,
+		0.5f, -0.5f, 0.0f, 0, 1, 0, 1,
+		0.0f, 0.5f, 0.0f, 0, 0, 1, 1
 	};
 
 	// Vertex Shader
 	// from learnopengl.com
 
-	const char *vertexShaderSource =	"#version 330 core										\n"
+	const char *vertexShaderSourceold =	"#version 330 core										\n"
 										"layout (location = 0) in vec3 aPos;					\n"
 										"void main()											\n"
 										"{														\n"
 										"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);	\n"
 										"}														\0";
 
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	const char *vertexShaderSource = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec4 aColor;
+out vec4 vertexColor;
+
+uniform vec3 offset;
+
+void main()
+{
+	gl_Position = vec4(aPos + offset, 1.0);
+	vertexColor = aColor;
+
+}
+
+)";
+
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
@@ -72,15 +88,20 @@ int main() {
 	// Fragment Shader
 	// from learnopengl.com
 
-	const char *fragmentShaderSource =	"#version 330 core									\n"
-										"out vec4 FragColor;								\n"
-										"void main()										\n"
-										"{													\n"
-										"   FragColor = vec4(0.4f, 0.8f, 0.08f, 1.0f);		\n"
-										"}													\0";
 
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	const char *fragmentShaderSource = R"(
+
+#version 330 core
+in vec4 vertexColor;
+out vec4 FragColor;
+
+void main()
+{
+	FragColor = vertexColor;
+}
+
+)";
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
@@ -113,25 +134,38 @@ int main() {
 	glDeleteShader(fragmentShader);
 
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
 
 
 
+	// Creating VBO
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
-
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	//Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
+	//Color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//Creating VAO
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+
+	//Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	//Color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
+
 
 
 	//Render loop
@@ -140,7 +174,18 @@ int main() {
 		//Clear framebuffer
 		glClearColor(0.3f, 0.4f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		//Drawing happens here!
+
+		float timeValue = glfwGetTime();
+		float xValue = (sin(timeValue) / 6.0f) + 0.0f;
+		float yValue = (sin(timeValue) / 6.0f) + 0.0f;
+		float zValue = (sin(timeValue) / 6.0f) + 1.0f;
+
+
+
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "offset");
+		glUseProgram(shaderProgram);
+		glUniform3f(vertexColorLocation, xValue, yValue, 0);
+
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glfwSwapBuffers(window);
 	}
