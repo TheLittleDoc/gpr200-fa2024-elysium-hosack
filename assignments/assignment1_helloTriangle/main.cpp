@@ -5,7 +5,7 @@
 * Using Eric's framework from assignment 1. Goal is to render a classic Hello *
 * Triangle window, plus our own little twist.                                 *
 *                                                                             *
-* Cloned: 9/6/2024          Edited last: 9/6/2024                             *
+* Cloned: 9/6/2024          Edited last: 9/10/2024                            *
 *                                                                             *
 ******************************************************************************/
 
@@ -61,12 +61,15 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec4 aColor;
 out vec4 vertexColor;
 
-uniform vec3 offset;
+uniform float uTime;
+uniform float uSpeed;
 
 void main()
 {
-	gl_Position = vec4(aPos + offset, 1.0);
-	vertexColor = aColor;
+	vec4 colorT = vec4(aColor.x + abs(tan(uTime)/2.0), aColor.y + abs(tan((uTime) + (aPos.x * 2)))/2.0, aColor.z + abs(tan((uTime) + (aPos.y * 2)))/2.0, 1);
+	vec3 aPosT = vec3(aPos.x + abs(sin(uTime * uSpeed))/6.0, aPos.y + abs(cos((uTime * uSpeed) + (aPos.x * 2)))/6.0, 0);
+	gl_Position = vec4(aPosT, 1.0);
+	vertexColor = aColor * colorT;
 
 }
 
@@ -166,25 +169,35 @@ void main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-
+	int timeLocation = glGetUniformLocation(shaderProgram, "uTime");
+	int speedLocation = glGetUniformLocation(shaderProgram, "uSpeed");
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		//Clear framebuffer
-		glClearColor(0.3f, 0.4f, 0.7f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+
 
 		float timeValue = glfwGetTime();
 		float xValue = (sin(timeValue) / 6.0f) + 0.0f;
-		float yValue = (sin(timeValue) / 6.0f) + 0.0f;
-		float zValue = (sin(timeValue) / 6.0f) + 1.0f;
+		float yValue = (cos(timeValue) / 6.0f) + 0.0f;
+
+		//float rValue = (sin(timeValue) / 2.0f)+ .5;
+		//float gValue = (sin((float)timeValue + (float)(2.0/3.0)*(float)ew::PI) / 2.0f) + .5;
+		//float bValue = (sin(timeValue + (4.0/3.0)*ew::PI) / 2.0f) +.5;
+		//std::cout << "(" << rValue << "," << gValue << "," << bValue << ")" << std::endl;
+
+		float rValue, gValue, bValue = .5f;
+
+		glClearColor(rValue, gValue, bValue, 1.0f);
+
+		glClear(GL_COLOR_BUFFER_BIT);
 
 
 
-		int vertexColorLocation = glGetUniformLocation(shaderProgram, "offset");
 		glUseProgram(shaderProgram);
-		glUniform3f(vertexColorLocation, xValue, yValue, 0);
+		glUniform1f(timeLocation, timeValue);
+		glUniform1f(speedLocation, 2.0f);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glfwSwapBuffers(window);
