@@ -1,5 +1,5 @@
 /******************************************************************************
-* File name: main.cpp       File author(s): Professor Winebrenner          *
+* File name: main.cpp       File author(s): Professor Winebrenner             *
 *                                           Mod. by Elysium Hosack            *
 * File description:                                                           *
 * Using Eric's framework from assignment 1. Goal is to render a classic Hello *
