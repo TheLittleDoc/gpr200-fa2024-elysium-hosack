@@ -1,9 +1,15 @@
-﻿//
-// Created by elysium.hosack on 9/13/2024.
-//
+﻿/******************************************************************************
+* File name: Shader.h       File author(s): Elysium Hosack                    *
+*                                                                             *
+* File description: Header for my learnopengl.com shader class. Includes      *
+* methods specifically related to reading the shader from file, setting it to *
+* be used, and modifying uniforms within each shader.                         *
+*                                                                             *
+* Created: 9/13/2024        Edited last: 9/13/2024                            *
+******************************************************************************/
 
-#ifndef SERINITYSHADER_H
-#define SERINITYSHADER_H
+#ifndef SHADER_H
+#define SHADER_H
 
 
 #include "../ew/external/glad.h"
@@ -16,7 +22,7 @@
 
 
 namespace serinity {
-
+    // Shader class header from learnopengl.com
     class Shader {
     public:
         unsigned int ID;
@@ -33,4 +39,4 @@ namespace serinity {
 
 } // serinity
 
-#endif //SERINITYSHADER_H
+#endif //SHADER_H
