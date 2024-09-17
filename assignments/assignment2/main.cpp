@@ -17,11 +17,15 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+
+#include <ew/external/stb_image.h>
+
 
 #include <serinity/Shader.h>
 
 const int SCREEN_WIDTH = 960;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_HEIGHT = 960;
 
 int main() {
 	printf("Initializing...");
@@ -43,10 +47,37 @@ int main() {
 	//Initialization goes here!
 
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f, 1, 0, 0, 1,
+		0.5f, 0.5f, 0.0f, 1, 0, 0, 1,
 		0.5f, -0.5f, 0.0f, 0, 1, 0, 1,
-		0.0f, 0.5f, 0.0f, 0, 0, 1, 1
+		-0.5f, -0.5f, 0.0f, 0, 0, 1, 1,
+		-0.5f, 0.5f, 0.0f, 1, 1, 1, 1
 	};
+
+	unsigned char indices [] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	float textureCoords[] = {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f
+	};
+
+
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	//texture setup
+	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
 
 	// Using my shader class
 	serinity::Shader serinityTest("assets/hellotriangle.vert", "assets/hellotriangle.frag");
@@ -88,7 +119,8 @@ int main() {
 		serinityTest.setFloat("uTime", timeValue);
 		serinityTest.setFloat("uSpeed", 2.0f);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
 		glfwSwapBuffers(window);
 	}
 	printf("Shutting down...");
