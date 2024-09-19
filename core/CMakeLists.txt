@@ -20,6 +20,8 @@ add_library(core STATIC ${CORE_SRC} ${CORE_INC}
         serinity/Shader.h
         ew/external/glad.h
         ew/external/glad.cpp
+        serinity/Texture2D.cpp
+        serinity/Texture2D.h
 )
 
 target_link_libraries(core PUBLIC glfw glm)
