@@ -5,7 +5,7 @@
 * Using Eric's framework from assignment 1. Goal is to render a classic Hello *
 * Triangle window, plus our own little twist.                                 *
 *                                                                             *
-* Cloned: 9/6/2024          Edited last: 9/10/2024                            *
+* Cloned: 9/6/2024          Edited last: 9/15/2024                            *
 *                                                                             *
 ******************************************************************************/
 

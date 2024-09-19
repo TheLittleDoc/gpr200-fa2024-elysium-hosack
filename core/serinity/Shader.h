@@ -5,7 +5,7 @@
 * methods specifically related to reading the shader from file, setting it to *
 * be used, and modifying uniforms within each shader.                         *
 *                                                                             *
-* Created: 9/13/2024        Edited last: 9/13/2024                            *
+* Created: 9/13/2024        Edited last: 9/19/2024                            *
 ******************************************************************************/
 
 #ifndef SHADER_H
@@ -14,6 +14,7 @@
 
 #include "../ew/external/glad.h"
 #include <glm/glm.hpp>
+#include "../ew/external/stb_image.h"
 
 #include <string>
 #include <fstream>
@@ -24,8 +25,8 @@
 namespace serinity {
     // Shader class header from learnopengl.com
     class Shader {
-    public:
         unsigned int ID;
+    public:
 
         Shader(const char* vertexPath, const char* fragmentPath);
 
@@ -35,6 +36,7 @@ namespace serinity {
         void setInt(const std::string &name, int value) const;
         void setFloat(const std::string &name, float value) const;
 
+        void setSampler2D(const std::string &name, int value) const;
     };
 
 } // serinity
