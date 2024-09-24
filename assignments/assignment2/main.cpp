@@ -24,6 +24,8 @@
 
 #include <serinity/Shader.h>
 
+#include "serinity/Texture2D.h"
+
 constexpr int SCREEN_WIDTH = 540;
 constexpr int SCREEN_HEIGHT = 540;
 
@@ -91,35 +93,16 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(7*sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	serinity::Texture2D texture2D("assets/AverageNebraskaResident.png", GL_NEAREST, GL_REPEAT);
+	texture2D.Bind(0);
 
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("assets/AverageNebraskaResident.png", &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-
-	stbi_image_free(data);
-
+	serinity::Texture2D texture2D2("assets/background.png", GL_NEAREST, GL_REPEAT);
+	texture2D.Bind(1);
 	// Using my shader class
-	serinity::Shader serinityTest("assets/hellotriangle.vert", "assets/hellotriangle.frag");
-
+	serinity::Shader serinityTest("assets/hellotextures.vert", "assets/hellotextures.frag");
+	serinity::Shader backgroundShader("assets/background.vert", "assets/background.frag");
 	serinityTest.use();
-	serinityTest.setInt("uTexture", 0);
+	serinityTest.setSampler2D("uTexture", 0);
 
 
 
@@ -137,10 +120,16 @@ int main() {
 		serinityTest.setFloat("uSpeed", 6.0f);
 		serinityTest.setFloat("uHeight", 1.8f);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		//draw background
+
+		backgroundShader.use();
+		backgroundShader.setSampler2D("uTexture", 1);
+		glBindVertexArray(VAO);
+
+		// bind textures
+
+
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
 		glfwSwapBuffers(window);
 		glClearColor(rValue, gValue, bValue, 1.0f);

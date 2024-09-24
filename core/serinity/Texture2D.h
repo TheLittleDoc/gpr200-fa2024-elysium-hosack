@@ -8,16 +8,20 @@
 * Created: 9/19/2024        Edited last: 9/19/2024                            *
 ******************************************************************************/
 
+#pragma once
+
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
 #include "../ew/external/glad.h"
 #include <glm/glm.hpp>
+#include <cstdio>
 #include "../ew/external/stb_image.h"
 
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 
 namespace serinity {
