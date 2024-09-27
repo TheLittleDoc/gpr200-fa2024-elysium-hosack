@@ -16,9 +16,9 @@
 
 namespace serinity {
     Texture2D::Texture2D(const char *filePath, int filterMode, int wrapMode) {
-
-        glGenTextures(1, &ID);
-
+        unsigned int texture;
+        glGenTextures(1, &texture);
+        std::cout << &texture << std::endl;
         //set wrap mode
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
@@ -38,15 +38,18 @@ namespace serinity {
         }
 
         stbi_image_free(data);
-
+        //bind
+        ID = texture;
         std::cout << "Texture loaded from " << filePath << " with ID " << ID << std::endl;
 
     }
 
-    void Texture2D::Bind(unsigned int slot) {
-        glActiveTexture(GL_TEXTURE0+slot);
-        glBindTexture(GL_TEXTURE_2D, this->ID);
+    void Texture2D::Bind(int slot) {
+        glBindTextureUnit(slot, this->ID);
+
     }
+
+
 
     Texture2D::~Texture2D() = default;
 

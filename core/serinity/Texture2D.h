@@ -32,7 +32,8 @@ namespace serinity {
         unsigned int ID;
         Texture2D(const char* filePath, int filterMode, int wrapMode);
         ~Texture2D();
-        void Bind(unsigned int slot = 0);
+
+        void Bind(int slot = 0);
     };
 
 } // serinity

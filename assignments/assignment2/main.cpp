@@ -93,45 +93,45 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(7*sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	serinity::Texture2D CIAagent("assets/AverageNebraskaResident.png", GL_NEAREST, GL_REPEAT);
-	serinity::Texture2D theVoid("assets/background.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+	serinity::Texture2D character("assets/AverageNebraskaResident.png", GL_NEAREST, GL_REPEAT);
+	serinity::Texture2D background("assets/background.png", GL_LINEAR_MIPMAP_NEAREST, GL_REPEAT);
+	//serinity::Texture2D space2("assets/space.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
 	// Using my shader class
 	serinity::Shader serinityTest("assets/hellotextures.vert", "assets/hellotextures.frag");
 	serinity::Shader backgroundShader("assets/background.vert", "assets/background.frag");
 
-
-
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-
 		float timeValue = glfwGetTime();
 		constexpr float rValue = .02f, gValue = .03f, bValue = .3f;
-
-
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//draw background
-		backgroundShader.use();
-		theVoid.Bind(0);
-		backgroundShader.setSampler2D("uTexture", 1);
 		glBindVertexArray(VAO);
+
+		backgroundShader.use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, background.ID);
+
+		backgroundShader.setFloat("uTime", timeValue);
+		backgroundShader.setFloat("uSpeed", 2.0f);
+		backgroundShader.setSampler2D("uTexture2", 0);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
-		// bind textures
-
-
-		//draw character
 
 		serinityTest.use();
+
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, character.ID);
+
 		serinityTest.setFloat("uTime", timeValue);
 		serinityTest.setFloat("uSpeed", 6.0f);
 		serinityTest.setFloat("uHeight", 1.8f);
-		serinityTest.setSampler2D("uTexture", CIAagent.ID-1);
+		serinityTest.setSampler2D("uTexture", 1);
 		glBindVertexArray(VAO);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
 		glfwSwapBuffers(window);
-		glClearColor(rValue, gValue, bValue, 1.0f);
 	}
 	printf("Shutting down...");
 	return 0;

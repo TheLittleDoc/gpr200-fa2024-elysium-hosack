@@ -18,6 +18,6 @@ void main()
     gl_Position = 3 * vec4(aPosT, 1.0);
     vertexColor = aColor * colorT;
 
-    textureCoords = aTexCoords * 4;
+    textureCoords = aTexCoords * 4 - (uTime / 5);
 
 }
