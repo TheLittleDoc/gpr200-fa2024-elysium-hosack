@@ -93,16 +93,11 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(7*sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	serinity::Texture2D texture2D("assets/AverageNebraskaResident.png", GL_NEAREST, GL_REPEAT);
-	texture2D.Bind(0);
-
-	serinity::Texture2D texture2D2("assets/background.png", GL_NEAREST, GL_REPEAT);
-	texture2D.Bind(1);
+	serinity::Texture2D CIAagent("assets/AverageNebraskaResident.png", GL_NEAREST, GL_REPEAT);
+	serinity::Texture2D theVoid("assets/background.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
 	// Using my shader class
 	serinity::Shader serinityTest("assets/hellotextures.vert", "assets/hellotextures.frag");
 	serinity::Shader backgroundShader("assets/background.vert", "assets/background.frag");
-	serinityTest.use();
-	serinityTest.setSampler2D("uTexture", 0);
 
 
 
@@ -116,19 +111,23 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		serinityTest.setFloat("uTime", timeValue);
-		serinityTest.setFloat("uSpeed", 6.0f);
-		serinityTest.setFloat("uHeight", 1.8f);
-
 		//draw background
-
 		backgroundShader.use();
+		theVoid.Bind(0);
 		backgroundShader.setSampler2D("uTexture", 1);
 		glBindVertexArray(VAO);
-
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
 		// bind textures
 
 
+		//draw character
+
+		serinityTest.use();
+		serinityTest.setFloat("uTime", timeValue);
+		serinityTest.setFloat("uSpeed", 6.0f);
+		serinityTest.setFloat("uHeight", 1.8f);
+		serinityTest.setSampler2D("uTexture", CIAagent.ID-1);
+		glBindVertexArray(VAO);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
 		glfwSwapBuffers(window);

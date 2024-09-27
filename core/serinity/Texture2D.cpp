@@ -11,11 +11,13 @@
 ******************************************************************************/
 
 #include "Texture2D.h"
+#include <string>
+#include <iostream>
 
 namespace serinity {
     Texture2D::Texture2D(const char *filePath, int filterMode, int wrapMode) {
-        unsigned int texture;
-        glGenTextures(1, &texture);
+
+        glGenTextures(1, &ID);
 
         //set wrap mode
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
@@ -35,15 +37,15 @@ namespace serinity {
             std::cout << "Failed to load texture" << std::endl;
         }
 
-        ID = texture;
         stbi_image_free(data);
+
+        std::cout << "Texture loaded from " << filePath << " with ID " << ID << std::endl;
 
     }
 
     void Texture2D::Bind(unsigned int slot) {
         glActiveTexture(GL_TEXTURE0+slot);
-
-        glBindTexture(GL_TEXTURE_2D, ID);
+        glBindTexture(GL_TEXTURE_2D, this->ID);
     }
 
     Texture2D::~Texture2D() = default;
