@@ -31,9 +31,13 @@ namespace serinity {
     public:
         unsigned int ID;
         Texture2D(const char* filePath, int filterMode, int wrapMode);
+        //copy constructor
+        Texture2D(const Texture2D& other);
         ~Texture2D();
 
         void Bind(int slot = 0);
+
+        void SetActive();
     };
 
 } // serinity
