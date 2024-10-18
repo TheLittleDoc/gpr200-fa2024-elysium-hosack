@@ -10,8 +10,8 @@
 ******************************************************************************/
 
 #include <iostream>
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 
 #include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
@@ -20,11 +20,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <ew/external/stb_image.h>
-
-
 #include <serenity/Shader.h>
-
-#include "serenity/Texture2D.h"
+#include <serenity/Texture2D.h>
 
 constexpr int SCREEN_WIDTH = 540;
 constexpr int SCREEN_HEIGHT = 540;
@@ -35,7 +32,7 @@ int main() {
 		printf("GLFW failed to init!");
 		return 1;
 	}
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Serinity - Hello Triangle", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Serenity - Hello Triangle", nullptr, nullptr);
 	if (window == nullptr) {
 		printf("GLFW failed to create window");
 		return 1;
@@ -52,8 +49,6 @@ int main() {
 	stbi_set_flip_vertically_on_load(true);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable( GL_BLEND );
-
-
 
 	float vertices[] = {
 		0.5f, 0.5f, 0.0f,	1, 0, 0, 1,	1.0f, 1.0f,
@@ -100,6 +95,14 @@ int main() {
 	serinity::Shader serinityTest("assets/hellotextures.vert", "assets/hellotextures.frag");
 	serinity::Shader backgroundShader("assets/background.vert", "assets/background.frag");
 
+	backgroundShader.use();
+
+	backgroundShader.setInt("uTexture", 0);
+	backgroundShader.setInt("uTexture2", 1);
+	serinityTest.use();
+
+
+	serinityTest.setInt("uTexture", 2);
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -113,17 +116,12 @@ int main() {
 
 		backgroundShader.use();
 
-		backgroundShader.setInt("uTexture", 0);
-		backgroundShader.setInt("uTexture2", 1);
 		backgroundShader.setFloat("uTime", timeValue);
 		backgroundShader.setFloat("uSpeed", 2.0f);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
 
 		serinityTest.use();
-
-
-		serinityTest.setInt("uTexture", 2);
 
 		serinityTest.setFloat("uTime", timeValue);
 		serinityTest.setFloat("uSpeed", 6.0f);

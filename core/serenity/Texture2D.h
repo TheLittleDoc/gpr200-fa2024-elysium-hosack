@@ -40,6 +40,6 @@ namespace serinity {
         void SetActive();
     };
 
-} // serinity
+} // serenity
 
 #endif //TEXTURE2D_H

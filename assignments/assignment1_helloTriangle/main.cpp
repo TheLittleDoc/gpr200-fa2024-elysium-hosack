@@ -18,7 +18,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include <serinity/Shader.h>
+#include <serenity/Shader.h>
 
 const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 720;

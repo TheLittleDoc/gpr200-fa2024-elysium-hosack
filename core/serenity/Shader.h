@@ -14,6 +14,8 @@
 
 #include "../ew/external/glad.h"
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 // #include "../ew/external/stb_image.h"
 
 #include <string>
@@ -39,6 +41,6 @@ namespace serinity {
         void setSampler2D(const std::string &name, unsigned int value) const;
     };
 
-} // serinity
+} // serenity
 
 #endif //SHADER_H

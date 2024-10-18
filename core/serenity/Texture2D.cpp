@@ -69,4 +69,4 @@ namespace serinity {
 
 
 
-} // serinity
+} // serenity

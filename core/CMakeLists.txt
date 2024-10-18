@@ -16,15 +16,15 @@ set(CORE_INC_DIR
 )
 
 add_library(core STATIC ${CORE_SRC} ${CORE_INC}
-        serinity/Shader.cpp
-        serinity/Shader.h
+        serenity/Shader.cpp
+        serenity/Shader.h
         ew/external/glad.h
         ew/external/glad.cpp
-        serinity/Texture2D.cpp
-        serinity/Texture2D.h
+        serenity/Texture2D.cpp
+        serenity/Texture2D.h
 )
 
-target_link_libraries(core PUBLIC glfw glm)
+target_link_libraries(core PUBLIC IMGUI glfw glm)
 
 
 

@@ -104,4 +104,4 @@ namespace serinity {
     void Shader::setSampler2D(const std::string &name, unsigned int value) const {
         glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
     }
-} // serinity
+} // serenity
