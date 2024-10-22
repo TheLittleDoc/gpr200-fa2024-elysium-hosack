@@ -104,4 +104,9 @@ namespace serinity {
     void Shader::setSampler2D(const std::string &name, unsigned int value) const {
         glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
     }
+
+    void Shader::setMat4(const std::string &name, glm::mat4 value) const {
+        glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+        //std::cout << "Matrix: " << value[0][0] << std::endl;
+    }
 } // serenity

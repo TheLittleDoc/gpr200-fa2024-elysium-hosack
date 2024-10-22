@@ -39,6 +39,7 @@ namespace serinity {
         void setFloat(const std::string &name, float value) const;
 
         void setSampler2D(const std::string &name, unsigned int value) const;
+        void setMat4(const std::string &name, glm::mat4 value) const;
     };
 
 } // serenity

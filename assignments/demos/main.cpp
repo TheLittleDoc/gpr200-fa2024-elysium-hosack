@@ -17,6 +17,8 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <ew/external/stb_image.h>
@@ -65,7 +67,8 @@ int main() {
 
 	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
 	glm::mat4 translation = glm::mat4(1.0f);
-	translation = glm::translate(translation, glm::vec3(1.0f, 1.0f, 1.0f));
+	translation = glm::translate(translation, glm::vec3(1.0f, 0.0f, 1.0f));
+	translation = glm::rotate(translation, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	vec = translation * vec;
 	std::cout << vec.x << vec.y << vec.z << std::endl;
 	/*unsigned int VAO;
