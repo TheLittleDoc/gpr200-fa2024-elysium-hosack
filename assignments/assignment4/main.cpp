@@ -26,8 +26,8 @@
 #include <serenity/Shader.h>
 #include <serenity/Texture2D.h>
 
-constexpr int SCREEN_WIDTH = 540;
-constexpr int SCREEN_HEIGHT = 540;
+constexpr int SCREEN_WIDTH = 1280;
+constexpr int SCREEN_HEIGHT = 720;
 
 constexpr float NEAR_PLANE = 0.1f;
 constexpr float FAR_PLANE = 100.0f;
@@ -43,12 +43,15 @@ float lastFrame = 0.0f;
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
+bool isPerspective = false;
 void processInput(GLFWwindow *window)
 {
 	//escape to quit
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	float cameraSpeed = 3.0f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        cameraSpeed *= 2.0f;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		cameraPos += cameraSpeed * cameraFront;
 	}
@@ -58,13 +61,23 @@ void processInput(GLFWwindow *window)
 		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        cameraPos += glm::normalize(cameraUp) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        cameraPos -= glm::normalize(cameraUp) * cameraSpeed;
+    //toggle perspective or orthographic on falling edge
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        isPerspective = !isPerspective;
+
+
 }
 
 float fov = 60.0f;
 bool firstMouse = true;
 float yaw   = -90.0f;
 float pitch =  0.0f;
-float lastX = 270, lastY = 270;
+float lastX = SCREEN_WIDTH/2, lastY = SCREEN_HEIGHT/2;
+
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -98,6 +111,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	cameraFront = glm::normalize(direction);
+    //set camera up
+    cameraUp = glm::normalize(glm::cross(glm::cross(cameraFront, glm::vec3(0.0f, 1.0f, 0.0f)), cameraFront));
 }
 
 
@@ -109,6 +124,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	if (fov > 120.0f)
 		fov = 120.0f;
 }
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
 
 int main() {
 	printf("Initializing...");
@@ -122,6 +143,7 @@ int main() {
 		return 1;
 	}
 	glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	if (!gladLoadGL(glfwGetProcAddress)) {
 		printf("GLAD Failed to load GL headers");
 		return 1;
@@ -285,16 +307,15 @@ int main() {
 		serinityTest.setFloat("uHeight", 1.8f);
 
 
-		const float radius = 10.0f;
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
 		glm::mat4 view;
 
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
-
+        if(isPerspective)
+		    projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
+        else
+            projection = glm::ortho(0.0f, (float)5*(float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 5.0f, 0.001f, 100000.0f);
 
 		serinityTest.setMat4("projection", projection);
 		serinityTest.setMat4("view", view);
@@ -302,8 +323,8 @@ int main() {
 		for(int i = 0; i < 10; i++){
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i * 30.0f;
-			model = glm::rotate(model, (angle + timeValue), glm::vec3(1.0f, 0.3f, 0.5f));
+			float angle = 20.0f * i;
+			model = glm::rotate(model, (angle + (timeValue)), glm::vec3(1.0f, 0.3f, 0.5f));
 			serinityTest.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 
