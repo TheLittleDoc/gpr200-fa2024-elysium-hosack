@@ -101,7 +101,7 @@ int main() {
 	serinity::Texture2D character = serinity::Texture2D("assets/AverageNebraskaResident.png", GL_NEAREST, GL_REPEAT);
 	serinity::Texture2D space2("assets/space.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
 	// Using my shader class
-	serinity::Shader serinityTest("assets/hellotextures.vert", "assets/hellotextures.frag");
+	serinity::Shader serinityTest("assets/cube.vert", "assets/cube.frag");
 	serinity::Shader backgroundShader("assets/background.vert", "assets/background.frag");
 
 	backgroundShader.use();

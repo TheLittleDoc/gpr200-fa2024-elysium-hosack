@@ -1,6 +1,7 @@
 #version 330 core
 in vec4 vertexColor;
 in vec2 textureCoords;
+in vec3 normal;
 
 out vec4 FragColor;
 
