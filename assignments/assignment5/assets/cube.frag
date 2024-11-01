@@ -15,6 +15,7 @@ uniform vec3 objectColor;
 uniform float ambientStrength;
 uniform float diffuseStrength;
 uniform float specularStrength;
+uniform float shininess;
 
 
 void main()
@@ -31,7 +32,6 @@ void main()
     vec3 diffuse = diffuseStrength * diff * lightColor;
 
     // specular w/ blinn-phong
-    float shininess = 64.0;
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(norm, halfwayDir), 0.0), shininess);

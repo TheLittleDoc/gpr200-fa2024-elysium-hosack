@@ -81,15 +81,20 @@ float pitch =  0.0f;
 float lastX = SCREEN_WIDTH/2, lastY = SCREEN_HEIGHT/2;
 
 glm::vec3 lightPos(1.2f, -1.0f, 2.0f);
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+float ambientStrength = 0.1f;
+float diffuseStrength = 0.5f;
+float specularStrength = 0.5f;
+float shininess = 32.0f;
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
 		firstMouse = true;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); //Unlocks
 		return;
 	}
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if (firstMouse)
 	{
 		lastX = xpos;
@@ -299,9 +304,17 @@ int main() {
 
 		character.Bind(2);
 		serinityTest.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		serinityTest.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		serinityTest.setVec3("lightColor", lightColor);
 		serinityTest.setVec3("lightPos", lightPos);
 		serinityTest.setVec3("viewPos", cameraPos);
+
+		// spec, diff, amb
+		serinityTest.setFloat("ambientStrength", ambientStrength);
+		serinityTest.setFloat("diffuseStrength", diffuseStrength);
+		serinityTest.setFloat("specularStrength", specularStrength);
+		serinityTest.setFloat("shininess", shininess);
+
+
 
 		serinityTest.setFloat("uTime", timeValue);
 		serinityTest.setFloat("uSpeed", 6.0f);
@@ -326,6 +339,7 @@ int main() {
 		lightCube.use();
 		lightCube.setMat4("projection", projection);
 		lightCube.setMat4("view", view);
+		lightCube.setVec3("lightColor", lightColor);
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
 		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
@@ -340,6 +354,14 @@ int main() {
 
 		ImGui::Begin("Settings");
 		ImGui::Text("Lighting Controls");
+		ImGui::SliderFloat3("Light Position", glm::value_ptr(lightPos), -10.0f, 10.0f);
+		// light color
+		ImGui::ColorEdit3("Light Color", glm::value_ptr(lightColor));
+		ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse Strength", &diffuseStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Shininess", &shininess, 2.0f, 1024.0f);
+
 		ImGui::End();
 
 		ImGui::Render();
