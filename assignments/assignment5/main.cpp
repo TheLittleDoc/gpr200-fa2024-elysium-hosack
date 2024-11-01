@@ -80,7 +80,7 @@ float yaw   = -90.0f;
 float pitch =  0.0f;
 float lastX = SCREEN_WIDTH/2, lastY = SCREEN_HEIGHT/2;
 
-glm::vec3 lightPos(-1.2f, -1.0f, -2.0f);
+glm::vec3 lightPos(1.2f, -1.0f, 2.0f);
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -141,7 +141,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void drawTris() {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-	std::cout << "Building triangles..." << std::endl;
 }
 
 int main() {
@@ -178,7 +177,7 @@ int main() {
 	glfwSetScrollCallback(window, scroll_callback);
 
 	// Using my shader class
-	serinity::Shader lightingShader("assets/lighting.vert", "assets/lighting.frag");
+	serinity::Shader lightCube("assets/lightCube.vert", "assets/lightCube.frag");
 	serinity::Shader serinityTest("assets/cube.vert", "assets/cube.frag");
 
 	float vertices[] = {
@@ -240,11 +239,6 @@ int main() {
 		//glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	unsigned char indices [] = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
 	unsigned int cubeVAO, VBO;
 
 	glGenVertexArrays(1, &cubeVAO);
@@ -302,44 +296,43 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		serinityTest.use();
+
+		character.Bind(2);
+		serinityTest.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		serinityTest.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		serinityTest.setVec3("lightPos", lightPos);
+		serinityTest.setVec3("viewPos", cameraPos);
+
 		serinityTest.setFloat("uTime", timeValue);
 		serinityTest.setFloat("uSpeed", 6.0f);
 		serinityTest.setFloat("uHeight", 1.8f);
 
-		lightingShader.use();
-		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.5f);
-		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 0.93f);
-
-		glm::mat4 view;
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		glm::mat4 projection = glm::mat4(1.0f);
         if(isPerspective) projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
         else projection = glm::ortho(0.0f, (float)5*(float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 5.0f, 0.001f, 100000.0f);
+		glm::mat4 view;
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-		glBindVertexArray(cubeVAO);
+		model = glm::mat4(1.0f);
 
-
+		serinityTest.setMat4("model", model);
 		serinityTest.setMat4("projection", projection);
 		serinityTest.setMat4("view", view);
+		glBindVertexArray(cubeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		for(int i = 0; i < 10; i++){
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * static_cast<float>(i);
-			model = glm::rotate(model, (angle + (timeValue)), glm::vec3(1.0f, 0.3f, 0.5f));
-			serinityTest.setMat4("model", model);
-			drawTris();
 
-		}
-		character.Bind(2);
+		// also draw the lamp object
+		lightCube.use();
+		lightCube.setMat4("projection", projection);
+		lightCube.setMat4("view", view);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+		lightCube.setMat4("model", model);
 
 		glBindVertexArray(lightCubeVAO);
-		// Light source cube
-		lightingShader.use();
-		auto model = glm::mat4(1.0f);
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f));
-		drawTris();
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();

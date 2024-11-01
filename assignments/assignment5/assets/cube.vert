@@ -7,6 +7,7 @@ in vec4 aColor;
 out vec4 vertexColor;
 out vec2 textureCoords;
 out vec3 normal;
+out vec3 FragPos;
 
 uniform float uTime;
 uniform float uSpeed;
@@ -27,5 +28,7 @@ void main()
 
     textureCoords = aTexCoords;
     normal = aNormal;
+
+    FragPos = vec3(model * vec4(aPos, 1.0));
 
 }
